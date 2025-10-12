@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil - Sistema Desbravadores{% endblock %}
+{% block page_title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-dark text-light">
+            <div class="card-header bg-primary">
+                <h5 class="mb-0">
+                    <i class="fas fa-user-circle"></i> Informações do Perfil
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Nome Completo:</strong></label>
+                            <p>{{ current_user.nome_completo }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Usuário:</strong></label>
+                            <p>{{ current_user.username }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Email:</strong></label>
+                            <p>{{ current_user.email }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Cargo:</strong></label>
+                            <p>{{ current_user.cargo }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Data de Cadastro:</strong></label>
+                            <p>{{ current_user.created_at.strftime('%d/%m/%Y às %H:%M') }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-end">
+                    <a href="{{ url_for('main.settings') }}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Editar Perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Nova Transação - Sistema Desbravadores{% endblock %}
+{% block page_title %}Nova Transação{% endblock %}
+
+{% block page_actions %}
+<a href="{{ url_for('financeiro.transacoes') }}" class="btn btn-outline-light">
+    <i class="fas fa-arrow-left"></i> Voltar
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-dark text-light">
+            <div class="card-header bg-primary">
+                <h5 class="mb-0">
+                    <i class="fas fa-plus-circle"></i> Cadastrar Nova Transação
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="tipo" class="form-label">Tipo *</label>
+                            <select class="form-select bg-dark text-light border-secondary" 
+                                    id="tipo" name="tipo" required onchange="updateCategories()">
+                                <option value="">Selecione o tipo</option>
+                                <option value="receita">Receita</option>
+                                <option value="despesa">Despesa</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="categoria" class="form-label">Categoria *</label>
+                            <select class="form-select bg-dark text-light border-secondary" 
+                                    id="categoria" name="categoria" required>
+                                <option value="">Selecione a categoria</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição *</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" 
+                               id="descricao" name="descricao" required 
+                               placeholder="Ex: Mensalidade de João Silva">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="valor" class="form-label">Valor (R$) *</label>
+                            <input type="number" step="0.01" min="0" 
+                                   class="form-control bg-dark text-light border-secondary" 
+                                   id="valor" name="valor" required placeholder="0.00">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="data_transacao" class="form-label">Data da Transação *</label>
+                            <input type="date" class="form-control bg-dark text-light border-secondary" 
+                                   id="data_transacao" name="data_transacao" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control bg-dark text-light border-secondary" 
+                                  id="observacoes" name="observacoes" rows="3" 
+                                  placeholder="Observações adicionais..."></textarea>
+                    </div>
+                    
+                    <div class="text-end">
+                        <a href="{{ url_for('financeiro.transacoes') }}" class="btn btn-secondary me-2">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Salvar Transação
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Definir categorias por tipo
+const categorias = {
+    receita: {{ categorias_receita | tojson }},
+    despesa: {{ categorias_despesa | tojson }}
+};
+
+function updateCategories() {
+    const tipo = document.getElementById('tipo').value;
+    const categoriaSelect = document.getElementById('categoria');
+    
+    // Limpar opções
+    categoriaSelect.innerHTML = '<option value="">Selecione a categoria</option>';
+    
+    if (tipo && categorias[tipo]) {
+        categorias[tipo].forEach(function(categoria) {
+            const option = document.createElement('option');
+            option.value = categoria;
+            option.textContent = categoria.charAt(0).toUpperCase() + categoria.slice(1);
+            categoriaSelect.appendChild(option);
+        });
+    }
+}
+
+// Definir data atual como padrão
+document.addEventListener('DOMContentLoaded', function() {
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('data_transacao').value = hoje;
+});
+</script>
+{% endblock %}

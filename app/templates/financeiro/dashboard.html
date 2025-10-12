@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Financeiro - Sistema Desbravadores{% endblock %}
+{% block page_title %}Dashboard Financeiro{% endblock %}
+
+{% block content %}
+<!-- Cards de Estatísticas -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">
+                            Mensalidades Pagas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.mensalidades_pagas }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">
+                            Mensalidades Pendentes
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.mensalidades_pendentes }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">
+                            Total Arrecadado ({{ stats.mes_atual }})
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold">R$ {{ "%.2f"|format(stats.total_arrecadado) }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">
+                            Ações Rápidas
+                        </div>
+                        <div class="h6 mb-0 font-weight-bold">Financeiro</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-cogs fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cards de Ação Rápida -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-dark text-light h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-calendar-check fa-3x text-success mb-3"></i>
+                <h5 class="card-title">Mensalidades</h5>
+                <p class="card-text">Controle de pagamentos mensais</p>
+                <a href="{{ url_for('financeiro.mensalidades') }}" class="btn btn-success">
+                    <i class="fas fa-eye"></i> Ver Mensalidades
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-dark text-light h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-exchange-alt fa-3x text-info mb-3"></i>
+                <h5 class="card-title">Transações</h5>
+                <p class="card-text">Receitas e despesas do clube</p>
+                <a href="{{ url_for('financeiro.transacoes') }}" class="btn btn-info">
+                    <i class="fas fa-list"></i> Ver Transações
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-dark text-light h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-line fa-3x text-warning mb-3"></i>
+                <h5 class="card-title">Fluxo de Caixa</h5>
+                <p class="card-text">Acompanhe entradas e saídas</p>
+                <a href="{{ url_for('financeiro.fluxo_caixa') }}" class="btn btn-warning">
+                    <i class="fas fa-chart-bar"></i> Ver Fluxo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-dark text-light h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">Nova Transação</h5>
+                <p class="card-text">Registre receitas ou despesas</p>
+                <a href="{{ url_for('financeiro.nova_transacao') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Adicionar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transações Recentes -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card bg-dark text-light">
+            <div class="card-header bg-primary">
+                <h5 class="mb-0">
+                    <i class="fas fa-history"></i> Transações Recentes
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if transacoes_recentes %}
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Tipo</th>
+                                <th>Categoria</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transacao in transacoes_recentes %}
+                            <tr>
+                                <td>{{ transacao.data_transacao.strftime('%d/%m/%Y') }}</td>
+                                <td>{{ transacao.descricao }}</td>
+                                <td>
+                                    {% if transacao.tipo == 'receita' %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-arrow-up"></i> Receita
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-arrow-down"></i> Despesa
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ transacao.categoria }}</span>
+                                </td>
+                                <td>
+                                    {% if transacao.tipo == 'receita' %}
+                                    <span class="text-success">+R$ {{ "%.2f"|format(transacao.valor) }}</span>
+                                    {% else %}
+                                    <span class="text-danger">-R$ {{ "%.2f"|format(transacao.valor) }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('financeiro.transacoes') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-list"></i> Ver Todas as Transações
+                    </a>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-exchange-alt fa-3x mb-3"></i>
+                    <h5>Nenhuma transação registrada</h5>
+                    <p>Comece registrando as primeiras transações do clube</p>
+                    <a href="{{ url_for('financeiro.nova_transacao') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nova Transação
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card bg-dark text-light">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-pie"></i> Resumo Financeiro
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>Mensalidades Pagas:</span>
+                        <span class="text-success">{{ stats.mensalidades_pagas }}</span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>Mensalidades Pendentes:</span>
+                        <span class="text-warning">{{ stats.mensalidades_pendentes }}</span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>Total Arrecadado:</span>
+                        <span class="text-success">R$ {{ "%.2f"|format(stats.total_arrecadado) }}</span>
+                    </div>
+                </div>
+                
+                <hr class="border-secondary">
+                
+                <div class="text-center">
+                    <a href="{{ url_for('relatorios.relatorio_fluxo_caixa') }}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-chart-bar"></i> Relatório Completo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

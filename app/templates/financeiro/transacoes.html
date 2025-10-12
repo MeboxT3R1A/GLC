@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Transações - Sistema Desbravadores{% endblock %}
+{% block page_title %}Transações Financeiras{% endblock %}
+
+{% block page_actions %}
+<a href="{{ url_for('financeiro.nova_transacao') }}" class="btn btn-primary">
+    <i class="fas fa-plus"></i> Nova Transação
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filtros -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form method="GET" class="d-flex">
+            <select class="form-select bg-dark text-light border-secondary me-2" name="tipo">
+                <option value="">Todos os tipos</option>
+                <option value="receita" {% if tipo == 'receita' %}selected{% endif %}>Receitas</option>
+                <option value="despesa" {% if tipo == 'despesa' %}selected{% endif %}>Despesas</option>
+            </select>
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
+        </form>
+    </div>
+    <div class="col-md-6 text-end">
+        <span class="text-muted">
+            Total: {{ transacoes.total }} transações
+        </span>
+    </div>
+</div>
+
+<!-- Tabela de Transações -->
+<div class="card bg-dark text-light">
+    <div class="card-body">
+        {% if transacoes.items %}
+        <div class="table-responsive">
+            <table class="table table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Tipo</th>
+                        <th>Categoria</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transacao in transacoes.items %}
+                    <tr>
+                        <td>{{ transacao.data_transacao.strftime('%d/%m/%Y') }}</td>
+                        <td>{{ transacao.descricao }}</td>
+                        <td>
+                            {% if transacao.tipo == 'receita' %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-arrow-up"></i> Receita
+                            </span>
+                            {% else %}
+                            <span class="badge bg-danger">
+                                <i class="fas fa-arrow-down"></i> Despesa
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ transacao.categoria }}</span>
+                        </td>
+                        <td>
+                            {% if transacao.tipo == 'receita' %}
+                            <span class="text-success">+R$ {{ "%.2f"|format(transacao.valor) }}</span>
+                            {% else %}
+                            <span class="text-danger">-R$ {{ "%.2f"|format(transacao.valor) }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info" title="Visualizar">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginação -->
+        {% if transacoes.pages > 1 %}
+        <nav aria-label="Paginação">
+            <ul class="pagination justify-content-center">
+                {% if transacoes.has_prev %}
+                <li class="page-item">
+                    <a class="page-link bg-dark text-light border-secondary" 
+                       href="{{ url_for('financeiro.transacoes', page=transacoes.prev_num, tipo=tipo) }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for page_num in transacoes.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != transacoes.page %}
+                        <li class="page-item">
+                            <a class="page-link bg-dark text-light border-secondary" 
+                               href="{{ url_for('financeiro.transacoes', page=page_num, tipo=tipo) }}">
+                                {{ page_num }}
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item active">
+                            <span class="page-link bg-primary border-primary">{{ page_num }}</span>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link bg-dark text-muted border-secondary">...</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if transacoes.has_next %}
+                <li class="page-item">
+                    <a class="page-link bg-dark text-light border-secondary" 
+                       href="{{ url_for('financeiro.transacoes', page=transacoes.next_num, tipo=tipo) }}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="fas fa-exchange-alt fa-4x mb-3"></i>
+            <h4>Nenhuma transação encontrada</h4>
+            <p>Comece registrando as primeiras transações do clube</p>
+            <a href="{{ url_for('financeiro.nova_transacao') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nova Transação
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Visualizar Desbravador - Sistema Desbravadores{% endblock %}
+{% block page_title %}Detalhes do Desbravador{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group" role="group">
+    <a href="{{ url_for('desbravadores.editar', id=desbravador.id) }}" class="btn btn-warning">
+        <i class="fas fa-edit"></i> Editar
+    </a>
+    <a href="{{ url_for('desbravadores.listar') }}" class="btn btn-outline-light">
+        <i class="fas fa-arrow-left"></i> Voltar
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Informações Pessoais -->
+    <div class="col-lg-6">
+        <div class="card bg-dark text-light mb-4">
+            <div class="card-header bg-primary">
+                <h5 class="mb-0">
+                    <i class="fas fa-user"></i> Informações Pessoais
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Nome:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ desbravador.nome }}
+                    </div>
+                </div>
+                <hr class="border-secondary">
+                
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Idade:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ desbravador.idade }} anos
+                    </div>
+                </div>
+                <hr class="border-secondary">
+                
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Data de Nascimento:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ desbravador.data_nascimento.strftime('%d/%m/%Y') }}
+                    </div>
+                </div>
+                <hr class="border-secondary">
+                
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Unidade:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        <span class="badge bg-primary">{{ desbravador.unidade }}</span>
+                    </div>
+                </div>
+                <hr class="border-secondary">
+                
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Classe:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ desbravador.classe }}
+                    </div>
+                </div>
+                <hr class="border-secondary">
+                
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Data de Cadastro:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ desbravador.data_cadastro.strftime('%d/%m/%Y às %H:%M') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contato e Responsável -->
+    <div class="col-lg-6">
+        <div class="card bg-dark text-light mb-4">
+            <div class="card-header bg-info">
+                <h5 class="mb-0">
+                    <i class="fas fa-phone"></i> Contato
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if desbravador.telefone %}
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Telefone:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        <a href="tel:{{ desbravador.telefone }}" class="text-info">
+                            <i class="fas fa-phone"></i> {{ desbravador.telefone }}
+                        </a>
+                    </div>
+                </div>
+                <hr class="border-secondary">
+                {% endif %}
+                
+                {% if desbravador.email %}
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        <a href="mailto:{{ desbravador.email }}" class="text-info">
+                            <i class="fas fa-envelope"></i> {{ desbravador.email }}
+                        </a>
+                    </div>
+                </div>
+                <hr class="border-secondary">
+                {% endif %}
+                
+                {% if desbravador.endereco %}
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Endereço:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        <i class="fas fa-map-marker-alt"></i> {{ desbravador.endereco }}
+                    </div>
+                </div>
+                <hr class="border-secondary">
+                {% endif %}
+                
+                {% if desbravador.nome_responsavel %}
+                <div class="row">
+                    <div class="col-sm-4">
+                        <strong>Responsável:</strong>
+                    </div>
+                    <div class="col-sm-8">
+                        {{ desbravador.nome_responsavel }}
+                        {% if desbravador.telefone_responsavel %}
+                        <br><small class="text-muted">
+                            <i class="fas fa-phone"></i> {{ desbravador.telefone_responsavel }}
+                        </small>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Especialidades -->
+{% if especialidades %}
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-dark text-light mb-4">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">
+                    <i class="fas fa-medal"></i> Especialidades Conquistadas
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for especialidade in especialidades %}
+                    <div class="col-md-6 col-lg-4 mb-2">
+                        <span class="badge bg-warning text-dark">
+                            <i class="fas fa-star"></i> {{ especialidade }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Histórico de Mensalidades -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-dark text-light">
+            <div class="card-header bg-success">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-check"></i> Histórico de Mensalidades
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if mensalidades %}
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Mês/Ano</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                                <th>Data Pagamento</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for mensalidade in mensalidades %}
+                            <tr>
+                                <td>{{ mensalidade.mes_referencia }}/{{ mensalidade.ano_referencia }}</td>
+                                <td>R$ {{ "%.2f"|format(mensalidade.valor) }}</td>
+                                <td>
+                                    {% if mensalidade.status == 'pago' %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check"></i> Pago
+                                    </span>
+                                    {% elif mensalidade.status == 'pendente' %}
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-clock"></i> Pendente
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-exclamation-triangle"></i> Atrasado
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if mensalidade.data_pagamento %}
+                                    {{ mensalidade.data_pagamento.strftime('%d/%m/%Y') }}
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                    <h5>Nenhuma mensalidade registrada</h5>
+                    <p>As mensalidades aparecerão aqui conforme forem criadas.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário - {{ desbravador.nome }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar para desbravadores -->
+    <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(135deg, #003366, #0066cc); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white fw-bold" href="{{ url_for('desbravador.dashboard') }}">
+                <i class="fas fa-mountain me-2"></i>
+                Área do Desbravador
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i> {{ desbravador.nome }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ url_for('desbravador.dashboard') }}">
+                            <i class="fas fa-home me-2"></i> Dashboard
+                        </a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('desbravador.perfil') }}">
+                            <i class="fas fa-user-circle me-2"></i> Meu Perfil
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('auth.desbravador_logout') }}">
+                            <i class="fas fa-sign-out-alt me-2"></i> Sair
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container-fluid mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Navegação do Calendário -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('desbravador.calendario', mes=mes_anterior, ano=ano_anterior) }}" 
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-chevron-left me-2"></i>
+                                {{ ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][mes_anterior-1] }}
+                            </a>
+                            
+                            <h3 class="text-primary fw-bold mb-0">
+                                {{ ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][mes_atual-1] }} {{ ano_atual }}
+                            </h3>
+                            
+                            <a href="{{ url_for('desbravador.calendario', mes=mes_proximo, ano=ano_proximo) }}" 
+                               class="btn btn-outline-primary">
+                                {{ ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][mes_proximo-1] }}
+                                <i class="fas fa-chevron-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Calendário -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center text-muted small py-3" style="width: 14.28%;">Domingo</th>
+                                        <th class="text-center text-muted small py-3" style="width: 14.28%;">Segunda</th>
+                                        <th class="text-center text-muted small py-3" style="width: 14.28%;">Terça</th>
+                                        <th class="text-center text-muted small py-3" style="width: 14.28%;">Quarta</th>
+                                        <th class="text-center text-muted small py-3" style="width: 14.28%;">Quinta</th>
+                                        <th class="text-center text-muted small py-3" style="width: 14.28%;">Sexta</th>
+                                        <th class="text-center text-muted small py-3" style="width: 14.28%;">Sábado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for semana in calendario %}
+                                    <tr>
+                                        {% for dia in semana %}
+                                        <td class="p-0" style="height: 120px; vertical-align: top;">
+                                            {% if dia != 0 %}
+                                                <div class="h-100 d-flex flex-column p-2 {% if dia == hoje.day and mes_atual == hoje.month %}bg-light border-primary{% endif %}">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span class="fw-bold {% if dia == hoje.day and mes_atual == hoje.month %}text-primary{% else %}text-dark{% endif %}">
+                                                            {{ dia }}
+                                                        </span>
+                                                        {% if dia == hoje.day and mes_atual == hoje.month %}
+                                                            <span class="badge bg-primary">Hoje</span>
+                                                        {% endif %}
+                                                    </div>
+                                                    
+                                                    <div class="flex-grow-1">
+                                                        {% if dia in eventos_por_dia %}
+                                                            {% for evento in eventos_por_dia[dia] %}
+                                                                <div class="mb-1">
+                                                                    <small class="badge bg-primary d-block text-start" 
+                                                                           data-bs-toggle="tooltip" 
+                                                                           title="{{ evento.nome }} - {{ evento.descricao or 'Sem descrição' }}">
+                                                                        <i class="fas fa-calendar-check me-1"></i>
+                                                                        {{ evento.nome[:15] }}{% if evento.nome|length > 15 %}...{% endif %}
+                                                                    </small>
+                                                                    {% if evento.data_inicio.strftime('%H:%M') != '00:00' %}
+                                                                        <small class="text-muted d-block">
+                                                                            <i class="fas fa-clock me-1"></i>
+                                                                            {{ evento.data_inicio.strftime('%H:%M') }}
+                                                                        </small>
+                                                                    {% endif %}
+                                                                    {% if evento.local %}
+                                                                        <small class="text-muted d-block">
+                                                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                                                            {{ evento.local[:20] }}{% if evento.local|length > 20 %}...{% endif %}
+                                                                        </small>
+                                                                    {% endif %}
+                                                                </div>
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lista de Eventos do Mês -->
+        {% if eventos_mes %}
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header" style="background: linear-gradient(135deg, #ffc107, #ff6600); color: white;">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-list me-2"></i> Eventos de {{ ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'][mes_atual-1] }}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for evento in eventos_mes %}
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100 border-start border-primary border-4">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-primary">
+                                            <i class="fas fa-calendar-check me-2"></i>
+                                            {{ evento.nome }}
+                                        </h6>
+                                        <p class="card-text text-muted small">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            {{ evento.data_inicio.strftime('%d/%m/%Y') }}
+                                            {% if evento.data_inicio.strftime('%H:%M') != '00:00' %}
+                                                às {{ evento.data_inicio.strftime('%H:%M') }}
+                                            {% endif %}
+                                        </p>
+                                        {% if evento.local %}
+                                        <p class="card-text text-muted small">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            {{ evento.local }}
+                                        </p>
+                                        {% endif %}
+                                        {% if evento.descricao %}
+                                        <p class="card-text small">
+                                            {{ evento.descricao[:100] }}{% if evento.descricao|length > 100 %}...{% endif %}
+                                        </p>
+                                        {% endif %}
+                                        {% if evento.tipo %}
+                                        <span class="badge bg-secondary">{{ evento.tipo }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Inicializar tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+</body>
+</html>
+

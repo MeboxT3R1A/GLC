@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - {{ desbravador.nome }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar para desbravadores -->
+    <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(135deg, #003366, #0066cc); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white fw-bold" href="{{ url_for('desbravador.dashboard') }}">
+                <i class="fas fa-mountain me-2"></i>
+                Área do Desbravador
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i> {{ desbravador.nome }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ url_for('desbravador.dashboard') }}">
+                            <i class="fas fa-home me-2"></i> Dashboard
+                        </a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('desbravador.calendario') }}">
+                            <i class="fas fa-calendar me-2"></i> Calendário
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('auth.desbravador_logout') }}">
+                            <i class="fas fa-sign-out-alt me-2"></i> Sair
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container-fluid mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Informações Pessoais -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header" style="background: linear-gradient(135deg, #003366, #0066cc); color: white;">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-user me-2"></i> Informações Pessoais
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Nome Completo</label>
+                                    <p class="fw-bold">{{ desbravador.nome }}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Idade</label>
+                                    <p class="fw-bold">{{ desbravador.idade }} anos</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Data de Nascimento</label>
+                                    <p class="fw-bold">{{ desbravador.data_nascimento.strftime('%d/%m/%Y') }}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Unidade</label>
+                                    <p class="fw-bold">
+                                        <span class="badge bg-primary">{{ desbravador.unidade }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Classe</label>
+                                    <p class="fw-bold">
+                                        <span class="badge bg-success">{{ desbravador.classe }}</span>
+                                    </p>
+                                </div>
+                                
+                                {% if desbravador.telefone %}
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Telefone</label>
+                                    <p class="fw-bold">
+                                        <i class="fas fa-phone me-2 text-primary"></i>
+                                        {{ desbravador.telefone }}
+                                    </p>
+                                </div>
+                                {% endif %}
+                                
+                                {% if desbravador.email %}
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Email</label>
+                                    <p class="fw-bold">
+                                        <i class="fas fa-envelope me-2 text-primary"></i>
+                                        {{ desbravador.email }}
+                                    </p>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small">Data de Cadastro</label>
+                                    <p class="fw-bold">
+                                        <i class="fas fa-calendar-plus me-2 text-primary"></i>
+                                        {{ desbravador.data_cadastro.strftime('%d/%m/%Y') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if desbravador.endereco %}
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Endereço</label>
+                            <p class="fw-bold">
+                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>
+                                {{ desbravador.endereco }}
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Especialidades -->
+                {% if desbravador.especialidades %}
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-header" style="background: linear-gradient(135deg, #ffc107, #ff6600); color: white;">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-star me-2"></i> Especialidades
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">{{ desbravador.especialidades }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="col-lg-4">
+                <!-- Informações do Responsável -->
+                {% if desbravador.nome_responsavel %}
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header" style="background: linear-gradient(135deg, #28a745, #20c997); color: white;">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-user-friends me-2"></i> Responsável
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Nome do Responsável</label>
+                            <p class="fw-bold">{{ desbravador.nome_responsavel }}</p>
+                        </div>
+                        
+                        {% if desbravador.telefone_responsavel %}
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Telefone do Responsável</label>
+                            <p class="fw-bold">
+                                <i class="fas fa-phone me-2 text-success"></i>
+                                {{ desbravador.telefone_responsavel }}
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Status da Conta -->
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-header" style="background: linear-gradient(135deg, #6f42c1, #e83e8c); color: white;">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-shield-alt me-2"></i> Status da Conta
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Status</label>
+                            <p class="fw-bold">
+                                {% if desbravador.ativo %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle me-1"></i> Ativo
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times-circle me-1"></i> Inativo
+                                    </span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Acesso ao Sistema</label>
+                            <p class="fw-bold">
+                                {% if desbravador.pode_fazer_login %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-unlock me-1"></i> Autorizado
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-lock me-1"></i> Não Autorizado
+                                    </span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        {% if desbravador.username %}
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Usuário</label>
+                            <p class="fw-bold">
+                                <i class="fas fa-user me-2 text-primary"></i>
+                                {{ desbravador.username }}
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Ações Rápidas -->
+                <div class="card border-0 shadow-sm mt-4">
+                    <div class="card-header" style="background: linear-gradient(135deg, #17a2b8, #6f42c1); color: white;">
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fas fa-bolt me-2"></i> Ações Rápidas
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('desbravador.dashboard') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-home me-2"></i> Voltar ao Dashboard
+                            </a>
+                            <a href="{{ url_for('desbravador.calendario') }}" class="btn btn-outline-success">
+                                <i class="fas fa-calendar me-2"></i> Ver Calendário
+                            </a>
+                            <a href="{{ url_for('auth.desbravador_logout') }}" class="btn btn-outline-danger">
+                                <i class="fas fa-sign-out-alt me-2"></i> Sair da Conta
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

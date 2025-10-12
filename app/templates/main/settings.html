@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações - Sistema Desbravadores{% endblock %}
+{% block page_title %}Configurações{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-dark text-light">
+            <div class="card-header bg-primary">
+                <h5 class="mb-0">
+                    <i class="fas fa-cog"></i> Configurações do Sistema
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Em Desenvolvimento:</strong> As configurações do sistema serão implementadas em versões futuras.
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-secondary text-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-key"></i> Alterar Senha
+                                </h6>
+                                <p class="card-text">Altere sua senha de acesso ao sistema.</p>
+                                <button class="btn btn-outline-light btn-sm" disabled>
+                                    <i class="fas fa-lock"></i> Em Breve
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-secondary text-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-bell"></i> Notificações
+                                </h6>
+                                <p class="card-text">Configure alertas e notificações.</p>
+                                <button class="btn btn-outline-light btn-sm" disabled>
+                                    <i class="fas fa-bell"></i> Em Breve
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-secondary text-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-palette"></i> Tema
+                                </h6>
+                                <p class="card-text">Personalize as cores do sistema.</p>
+                                <button class="btn btn-outline-light btn-sm" disabled>
+                                    <i class="fas fa-paint-brush"></i> Em Breve
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-secondary text-light mb-3">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-database"></i> Backup
+                                </h6>
+                                <p class="card-text">Configure backup automático dos dados.</p>
+                                <button class="btn btn-outline-light btn-sm" disabled>
+                                    <i class="fas fa-save"></i> Em Breve
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

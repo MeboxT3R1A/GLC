@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema Desbravadores{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <!-- Navbar estilo BB -->
+    <nav class="navbar navbar-expand-lg navbar-light" style="background: linear-gradient(135deg, #003366, #0066cc); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white fw-bold" href="{{ url_for('main.dashboard') }}">
+                <i class="fas fa-mountain me-2"></i>
+                Sistema Desbravadores
+            </a>
+            
+            {% if current_user.is_authenticated %}
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('main.dashboard') }}">
+                            <i class="fas fa-home me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('desbravadores.listar') }}">
+                            <i class="fas fa-users me-1"></i> Desbravadores
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('financeiro.dashboard') }}">
+                            <i class="fas fa-dollar-sign me-1"></i> Financeiro
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('relatorios.index') }}">
+                            <i class="fas fa-chart-bar me-1"></i> Relatórios
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item me-3">
+                        <button class="theme-toggle" id="themeToggle" title="Alternar tema">
+                            <i class="fas fa-moon" id="themeIcon"></i>
+                            <span id="themeText">Escuro</span>
+                        </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i> {{ current_user.nome_completo }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('main.profile') }}">
+                                <i class="fas fa-user-circle me-2"></i> Perfil
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.settings') }}">
+                                <i class="fas fa-cog me-2"></i> Configurações
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i> Sair
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <!-- Sidebar melhorada -->
+    {% if current_user.is_authenticated %}
+    <div class="sidebar" style="width: 250px;">
+        <div class="d-flex flex-column h-100">
+            <div class="flex-grow-1">
+                <nav class="nav flex-column">
+                    <a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">
+                        <i class="fas fa-home me-2"></i> Dashboard
+                    </a>
+                    <a class="nav-link {% if 'desbravadores' in request.endpoint %}active{% endif %}" href="{{ url_for('desbravadores.listar') }}">
+                        <i class="fas fa-users me-2"></i> Desbravadores
+                    </a>
+                    <a class="nav-link {% if 'financeiro' in request.endpoint %}active{% endif %}" href="{{ url_for('financeiro.dashboard') }}">
+                        <i class="fas fa-dollar-sign me-2"></i> Financeiro
+                    </a>
+                    <a class="nav-link {% if 'relatorios' in request.endpoint %}active{% endif %}" href="{{ url_for('relatorios.index') }}">
+                        <i class="fas fa-chart-bar me-2"></i> Relatórios
+                    </a>
+                    <hr class="my-2">
+                    <h6 class="px-3 text-muted small text-uppercase">Ações Rápidas</h6>
+                    <a class="nav-link" href="{{ url_for('desbravadores.cadastrar') }}">
+                        <i class="fas fa-user-plus me-2"></i> Cadastrar Desbravador
+                    </a>
+                    <a class="nav-link" href="{{ url_for('financeiro.nova_transacao') }}">
+                        <i class="fas fa-plus-circle me-2"></i> Nova Transação
+                    </a>
+                    <a class="nav-link" href="{{ url_for('relatorios.relatorio_mensalidades') }}">
+                        <i class="fas fa-file-alt me-2"></i> Relatório Mensalidades
+                    </a>
+                </nav>
+            </div>
+            <div class="p-3 border-top">
+                <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Sistema Desbravadores v1.0
+                </small>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="container-fluid mt-3" {% if current_user.is_authenticated %}style="margin-left: 250px;"{% endif %}>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    
+    <script>
+        // Sistema de alternância de tema
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+        const body = document.body;
+        
+        // Verificar tema salvo no localStorage
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeIcon.className = 'fas fa-sun';
+            themeText.textContent = 'Claro';
+        }
+        
+        // Alternar tema
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                // Mudar para tema claro
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                themeText.textContent = 'Escuro';
+                localStorage.setItem('theme', 'light');
+            } else {
+                // Mudar para tema escuro
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                themeText.textContent = 'Claro';
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+        
+        // Aplicar tema salvo na inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                themeText.textContent = 'Claro';
+            }
+        });
+    </script>
+</body>
+</html>

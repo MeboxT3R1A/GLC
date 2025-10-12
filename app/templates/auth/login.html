@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Sistema Desbravadores{% endblock %}
+
+{% block content %}
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+    <div class="row w-100">
+        <div class="col-md-6 col-lg-4 mx-auto">
+            <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #003366, #0066cc); border-radius: 15px 15px 0 0;">
+                    <h3 class="mb-0 text-white fw-bold">
+                        <i class="fas fa-mountain me-2"></i>
+                        Sistema Desbravadores
+                    </h3>
+                    <p class="mb-0 text-white-50 mt-2">Faça login para continuar</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-4">
+                            <label for="username" class="form-label fw-semibold">
+                                <i class="fas fa-user me-2 text-primary"></i> Usuário
+                            </label>
+                            <input type="text" class="form-control form-control-lg" 
+                                   id="username" name="username" required 
+                                   placeholder="Digite seu usuário">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-semibold">
+                                <i class="fas fa-lock me-2 text-primary"></i> Senha
+                            </label>
+                            <input type="password" class="form-control form-control-lg" 
+                                   id="password" name="password" required 
+                                   placeholder="Digite sua senha">
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg py-3">
+                                <i class="fas fa-sign-in-alt me-2"></i> Entrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3" style="background-color: #f8f9fa;">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">
+                                <a href="{{ url_for('auth.register') }}" class="text-decoration-none fw-semibold" style="color: #0066cc;">
+                                    Primeiro acesso? Cadastre-se aqui
+                                </a>
+                            </small>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">
+                                <a href="{{ url_for('auth.desbravador_login') }}" class="text-decoration-none fw-semibold" style="color: #ff6600;">
+                                    <i class="fas fa-user me-1"></i> Área do Desbravador
+                                </a>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

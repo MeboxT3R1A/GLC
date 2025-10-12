@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro - Sistema Desbravadores{% endblock %}
+
+{% block content %}
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+    <div class="row w-100">
+        <div class="col-md-8 col-lg-6 mx-auto">
+            <div class="card bg-dark text-light">
+                <div class="card-header bg-primary text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-plus"></i>
+                        Cadastro de Usuário
+                    </h3>
+                    <p class="mb-0">Crie sua conta para acessar o sistema</p>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">
+                                        <i class="fas fa-user"></i> Nome de Usuário
+                                    </label>
+                                    <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                           id="username" name="username" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">
+                                        <i class="fas fa-envelope"></i> Email
+                                    </label>
+                                    <input type="email" class="form-control bg-dark text-light border-secondary" 
+                                           id="email" name="email" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nome_completo" class="form-label">
+                                        <i class="fas fa-id-card"></i> Nome Completo
+                                    </label>
+                                    <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                           id="nome_completo" name="nome_completo" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="cargo" class="form-label">
+                                        <i class="fas fa-briefcase"></i> Cargo
+                                    </label>
+                                    <select class="form-select bg-dark text-light border-secondary" 
+                                            id="cargo" name="cargo" required>
+                                        <option value="">Selecione o cargo</option>
+                                        <option value="Diretor">Diretor</option>
+                                        <option value="Secretário">Secretário</option>
+                                        <option value="Tesoureiro">Tesoureiro</option>
+                                        <option value="Conselheiro">Conselheiro</option>
+                                        <option value="Outro">Outro</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock"></i> Senha
+                            </label>
+                            <input type="password" class="form-control bg-dark text-light border-secondary" 
+                                   id="password" name="password" required>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus"></i> Cadastrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small class="text-muted">
+                        <a href="{{ url_for('auth.login') }}" class="text-warning">
+                            Já tem conta? Faça login aqui
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

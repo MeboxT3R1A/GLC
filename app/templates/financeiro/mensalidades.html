@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Mensalidades - Sistema Desbravadores{% endblock %}
+{% block page_title %}Controle de Mensalidades{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group" role="group">
+    <button type="button" class="btn btn-outline-light dropdown-toggle" data-bs-toggle="dropdown">
+        <i class="fas fa-calendar"></i> {{ stats.mes_atual }}/{{ stats.ano_atual }}
+    </button>
+    <ul class="dropdown-menu bg-dark">
+        {% for mes in range(1, 13) %}
+        <li>
+            <a class="dropdown-item text-light" href="{{ url_for('financeiro.mensalidades', mes=mes, ano=stats.ano_atual) }}">
+                {{ mes }}/{{ stats.ano_atual }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Resumo do Mês -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Pagas</h6>
+                        <h4>{{ mensalidades|selectattr('status', 'equalto', 'pago')|list|length }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Pendentes</h6>
+                        <h4>{{ mensalidades|selectattr('status', 'equalto', 'pendente')|list|length }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Total Arrecadado</h6>
+                        <h4>R$ {{ "%.2f"|format(total_pago) }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-dollar-sign fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Total Esperado</h6>
+                        <h4>R$ {{ "%.2f"|format(total_geral) }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-chart-pie fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de Mensalidades -->
+<div class="card bg-dark text-light">
+    <div class="card-header bg-primary">
+        <h5 class="mb-0">
+            <i class="fas fa-calendar-check"></i> Mensalidades - {{ stats.mes_atual }}/{{ stats.ano_atual }}
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if mensalidades %}
+        <div class="table-responsive">
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Desbravador</th>
+                        <th>Unidade</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th>Data Pagamento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mensalidade in mensalidades %}
+                    <tr>
+                        <td>
+                            <strong>{{ mensalidade.desbravador.nome }}</strong>
+                            <br><small class="text-muted">{{ mensalidade.desbravador.classe }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ mensalidade.desbravador.unidade }}</span>
+                        </td>
+                        <td>R$ {{ "%.2f"|format(mensalidade.valor) }}</td>
+                        <td>
+                            {% if mensalidade.status == 'pago' %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check"></i> Pago
+                            </span>
+                            {% elif mensalidade.status == 'pendente' %}
+                            <span class="badge bg-warning">
+                                <i class="fas fa-clock"></i> Pendente
+                            </span>
+                            {% else %}
+                            <span class="badge bg-danger">
+                                <i class="fas fa-exclamation-triangle"></i> Atrasado
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if mensalidade.data_pagamento %}
+                            {{ mensalidade.data_pagamento.strftime('%d/%m/%Y') }}
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if mensalidade.status != 'pago' %}
+                            <form method="POST" action="{{ url_for('financeiro.pagar_mensalidade', id=mensalidade.id) }}" 
+                                  style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-success" 
+                                        onclick="return confirm('Confirmar pagamento da mensalidade de {{ mensalidade.desbravador.nome }}?')">
+                                    <i class="fas fa-check"></i> Marcar como Pago
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="text-success">
+                                <i class="fas fa-check-circle"></i> Pago
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Ações em Lote -->
+        <div class="mt-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-outline-success" onclick="marcarTodasPagas()">
+                        <i class="fas fa-check-double"></i> Marcar Todas como Pagas
+                    </button>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="{{ url_for('relatorios.relatorio_mensalidades', mes=mes, ano=ano) }}" 
+                       class="btn btn-outline-primary">
+                        <i class="fas fa-file-alt"></i> Gerar Relatório
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="fas fa-calendar-times fa-4x mb-3"></i>
+            <h4>Nenhuma mensalidade encontrada</h4>
+            <p>As mensalidades para este mês serão criadas automaticamente quando houver desbravadores cadastrados.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function marcarTodasPagas() {
+    if (confirm('Tem certeza que deseja marcar todas as mensalidades pendentes como pagas?')) {
+        // Implementar ação em lote
+        alert('Funcionalidade em desenvolvimento!');
+    }
+}
+</script>
+{% endblock %}
